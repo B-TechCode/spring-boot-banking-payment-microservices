@@ -43,7 +43,7 @@ public class CorrelationAndAccessLogFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
       throws ServletException, IOException {
 
-    // 📌 Try to read the correlation ID from the incoming request header
+    //  Try to read the correlation ID from the incoming request header
     String cid = req.getHeader("X-Request-Id");
 
     // If none present (first hop), generate a new UUID
@@ -54,7 +54,7 @@ public class CorrelationAndAccessLogFilter extends OncePerRequestFilter {
     // Record start time for duration calculation
     long startNs = System.nanoTime();
 
-    // 🧠 Put core request metadata into MDC — this will auto-attach to all logs during this request
+    //  Put core request metadata into MDC — this will auto-attach to all logs during this request
     MDC.put(CID, cid);
     MDC.put("method", req.getMethod());
     MDC.put("path", req.getRequestURI());
@@ -63,14 +63,14 @@ public class CorrelationAndAccessLogFilter extends OncePerRequestFilter {
     res.setHeader("X-Request-Id", cid);
 
     try {
-      // 📥 Log request entry — controller just received the call
+      //  Log request entry — controller just received the call
       LOG.info("ENTER controller cid={} method={} path={}", cid, MDC.get("method"), MDC.get("path"));
 
       // Continue the filter chain (this hands over control to Spring MVC and controllers)
       chain.doFilter(req, res);
 
     } finally {
-      // 📏 Compute request duration in milliseconds
+      //  Compute request duration in milliseconds
       long durMs = (System.nanoTime() - startNs) / 1_000_000L;
 
       // Put response metadata into MDC before exit log
@@ -80,7 +80,7 @@ public class CorrelationAndAccessLogFilter extends OncePerRequestFilter {
       // Echo header again (defensive) — ensures response always has X-Request-Id
       res.setHeader("X-Request-Id", cid);
 
-      // 📤 Log the exit line — a single concise access log line
+      //  Log the exit line — a single concise access log line
       LOG.info(
           "Exit controller cid={} method={} path={} status={} durMs={}",
           cid,
@@ -90,7 +90,7 @@ public class CorrelationAndAccessLogFilter extends OncePerRequestFilter {
           MDC.get("durMs")
       );
 
-      // 🧹 Always clear MDC to avoid leaking context into unrelated threads/requests
+      //  Always clear MDC to avoid leaking context into unrelated threads/requests
       MDC.clear();
     }
   }

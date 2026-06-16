@@ -80,7 +80,7 @@ public class CustomerController {
         Integer expected = parseIfMatch(ifMatch);
         Integer newVersion = service.updateCustomer(id, request, expected);
 
-        // ✅ Return 200 OK, no body, only ETag
+        //  Return 200 OK, no body, only ETag
         return ResponseEntity.ok()
                 .eTag("\"" + newVersion + "\"")
                 .build();
@@ -94,7 +94,7 @@ public class CustomerController {
 
         Integer newVersion = service.updateKycStatus(id, request.getKycStatus());
 
-        // ✅ Return 204 No Content, only ETag
+        // Return 204 No Content, only ETag
         return ResponseEntity.noContent()
                 .eTag("\"" + newVersion + "\"")
                 .build();
